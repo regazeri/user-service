@@ -1,0 +1,76 @@
+version: '3'
+services:
+  pg2:
+    container_name: pg2
+    image: postgres:12
+    networks:
+      - usernet
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: dbuser
+    ports:
+      - 5432:5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  user:
+    container_name: user
+    build:
+      dockerfile: Dockerfile.dev
+      context: .
+    stdin_open: true  
+    restart: unless-stopped
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - 4002:4002
+    environment: 
+      DB_USER: postgres
+      DB_PASSWORD: password
+      DATABASE: dbuser
+      REDIS_HOST: redis
+      RABBIT_HOST: rabbit
+    networks:
+      - usernet
+    links:
+      - pg2
+      - redis
+      - rabbit
+  redis:
+    image: 'redis:latest'
+    command: ["redis-server", "--bind", "0.0.0.0", "--port", "6379"]
+    hostname: redis
+    container_name: redisuser
+    ports:
+      - '6379:6379'
+    networks:
+      - usernet
+    volumes:
+      - redis_data:/data    
+  rabbit:
+    image: rabbitmq:management
+    container_name: rabbit
+    environment:
+      RABBITMQ_ERLANG_COOKIE: SWQOKODSQALRPCLNMEQG
+      RABBITMQ_DEFAULT_USER: rabbitmq
+      RABBITMQ_DEFAULT_PASS: rabbitmq
+    networks:
+      - usernet
+    volumes:
+      - rabbit_data:/var/lib/rabbitmq
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+      - '25672:25672'
+
+networks:
+  usernet:
+    driver: bridge
+volumes:
+  pgdata:
+    driver: local
+  redis_data:
+    driver: local
+  rabbit_data:
+    driver: local  

@@ -1,0 +1,84 @@
+# name: User
+containerPort: 4002
+containerSrv: usersrv
+TimeZone: tz-iran
+replicaCount: 1
+imagePullSecrets: "regcred"
+imagePullPolicy: IfNotPresent
+
+
+
+
+
+postgresql:
+  ACCESS_TOKEN_TTL: '15m'
+  API_PREFIX: /v1/api
+  DATABASE: dbuser 
+  DB_ENTITIES: modules/**/entities/*.entity.{ts,js} 
+  DB_HOST: 'postgres-user'
+  DB_MIGRATIONS: migrations/*.{ts,js} 
+  DB_PASSWORD: "Jie7eich" 
+  DB_PORT: '5432' 
+  DB_TYPE: postgres
+  DB_USER: postgres
+  DEV_MODE: "true"
+  LOGGING: "true"
+  POSTGRES_PORT: '5432'
+  POSTGRES_IP: "192.168.0.115"
+  POSTGRES_HOST: "postgres-user"
+
+redis:
+  REDIS_HOST: user-redis
+  REFRESH_TOKEN_TTL: '604800'
+  REDIS_SRV: redis
+  REDIS_INSTALL: true
+swager:
+  SWAGGER_DESCRIPTION: 'API use for user management'
+  SWAGGER_ENABLE: '1'
+  SWAGGER_PREFIX: /docsuser
+  SWAGGER_TITLE: User API
+
+rabbit:
+  HOST: rabbit
+  RABBIT_PORT: 5672
+  RABBIT_URL: amqp://
+  RABBIT_USER: rabbitmq
+  RABBIT_PASS: rabbitmq
+
+  
+
+image:
+  repository: gitlabci.rovzane.com:5050/back/panel/user-service
+  tag: latest
+
+readinessProbe:
+  enable: true
+  tcpSocket:
+    port: 4002
+
+
+livenessProbe:
+  enable: true
+  tcpSocket:
+    port: 4002
+
+configMapRef:
+  name: userconfigmap
+
+
+resources:
+  enable: false
+  requests:
+    memory: 64Mi
+    cpu: 250m
+
+  limits:
+    enable: false
+    memory: 128Mi
+    cpu: 500m
+
+spec:
+  rules:
+    http:
+      paths:
+        path: "/docsuser"

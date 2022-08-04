@@ -1,0 +1,22 @@
+
+# For Development Environment
+FROM node:14.15.4-alpine 
+RUN apk add --no-cache git
+RUN yarn cache clean
+# Work Directory
+WORKDIR /usr/src/app
+
+# Node Modules
+COPY package.json yarn.lock ./
+# Install node modules
+RUN yarn install 
+
+# Copy app source to work directory
+COPY . .
+COPY .env.example .
+COPY ormconfig.docker.js ./ormconfig.js
+# Expose port 
+EXPOSE 4002
+
+# run the app
+CMD ["yarn", "start:dev"]

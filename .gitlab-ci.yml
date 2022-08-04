@@ -1,0 +1,57 @@
+variables:
+  CI_PROJECT: https://gitlabci.rovzane.com/back/panel/user-service.git
+  PROJECT_PATH: /home/skyroom/panel/user-service
+  CI_PROJECT_PATH: gitlabci.rovzane.com:5050/back/panel/user-service
+  DOCKER_DRIVER: overlay
+  SERVICE_NAME: user-service
+image: $GITLAB/root/devops/tools/docker:stables
+stages:
+  - testing
+  - build
+  - deploy
+  - deploy2
+
+
+test:
+  stage: testing
+  script:
+    - echo "test"
+  tags:
+    - "skyroom"
+  only:
+    - develop
+build_image:
+  stage: build   
+  script:
+    - docker login $GITLAB  -u $USER_GITLAB -p $PASS_GITLAB
+    - echo "build start"
+    - docker login $GITLAB  -u $USER_GITLAB -p $PASS_GITLAB
+    - echo "build"        
+    - docker build -t $CI_PROJECT_PATH:$CI_COMMIT_SHORT_SHA  .
+    - docker push $CI_PROJECT_PATH:$CI_COMMIT_SHORT_SHA
+    - docker tag $CI_PROJECT_PATH:$CI_COMMIT_SHORT_SHA $CI_PROJECT_PATH:latest
+    - docker push   $CI_PROJECT_PATH:latest
+  tags:
+    - "skyroom"
+  only:
+    - develop
+deploy:
+  stage: deploy
+  image: gitlabci.rovzane.com:5050/root/devops/tools/helm:v2
+  script:
+    - helm upgrade --install --atomic --namespace default --create-namespace --wait --timeout=30m0s user infra/user --set image.tag=$CI_COMMIT_SHORT_SHA
+  tags:
+    - "skyroom"
+  only:
+    - develop
+  
+deploy2:
+  stage: deploy2
+  image: gitlabci.rovzane.com:5050/root/devops/tools/helm:v4
+  script:
+    - helm upgrade --install --atomic --namespace default --create-namespace --wait --timeout=30m0s user infra/user -f infra/user/values2.yaml --set image.tag=$CI_COMMIT_SHORT_SHA
+  tags:
+    - "skyroom"
+  only:
+    - develop
+  

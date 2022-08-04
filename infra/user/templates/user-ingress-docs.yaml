@@ -1,0 +1,17 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: userdocs
+  annotations:
+    kubernetes.io/ingress.class: kong
+    #konghq.com/strip-path: "true"
+    #    konghq.com/plugins: jwt-station
+spec:
+  rules:
+  - http:
+      paths:
+      - path: {{ .Values.spec.rules.http.paths.path }}
+        backend:
+          serviceName: {{ .Values.containerSrv }}
+          servicePort: {{ .Values.containerPort }}
+

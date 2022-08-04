@@ -1,0 +1,5 @@
+export enum EmailConfirmTypeEnum {
+  REGISTER = 'REGISTER',
+  UPDATE_EMAIL = 'UPDATE_EMAIL',
+  FORGOT_PASSWORD = 'FORGOT_PASSWORD',
+}

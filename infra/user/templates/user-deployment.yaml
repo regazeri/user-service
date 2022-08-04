@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: {{ .Release.Name }}
+  name: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: {{ .Values.configMapRef.name }}
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        # command: ["/bin/sh"]
+        # args: ["-c", "while true; do yarn db:migrate; sleep 10;done"] 
+        imagePullPolicy: {{ .Values.imagePullPolicy }}
+        name: {{ .Release.Name }}
+        volumeMounts:
+        - name: {{ .Values.TimeZone }}
+          mountPath: /etc/localtime
+        ports:
+        - containerPort: {{ .Values.containerPort }}
+
+        # {{ if eq .Values.resources.enable true | quote }}
+        # resources:
+        #   requests:
+        #     memory: {{ .Values.resources.requests.memory | quote }}
+        #     cpu: {{ .Values.resources.requests.cpu | quote }}
+        # {{ end }}
+
+        #   {{ if eq .Values.resources.limits.enable true | quote }} 
+        #   limits:
+        #     memory: {{ .Values.resources.limits.memory | quote }}
+        #     cpu: {{ .Values.resources.limits.cpu | quote }}
+        #   {{ end }}
+
+
+        {{ if eq .Values.readinessProbe.enable true | quote }}
+        readinessProbe:
+          tcpSocket:
+            port: {{ .Values.readinessProbe.tcpSocket.port }}
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        {{ end }}
+        {{ if eq .Values.livenessProbe.enable true |quote }}
+        livenessProbe:
+          tcpSocket:
+            port: {{ .Values.livenessProbe.tcpSocket.port }}
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        {{ end }}
+      volumes:
+        - name: {{ .Values.TimeZone }}
+          hostPath:
+            path: /usr/share/zoneinfo/Iran
+
+      imagePullSecrets:
+      - name: {{ .Values.imagePullSecrets }}
+      
+      terminationGracePeriodSeconds: 30
+
+

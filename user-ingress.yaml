@@ -1,0 +1,205 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: kong
+    konghq.com/plugins: my-jwt-station
+    meta.helm.sh/release-name: user
+    meta.helm.sh/release-namespace: default
+    correlation-id.plugin.konghq.com: add-request-id
+  generation: 1
+  labels:
+    app.kubernetes.io/managed-by: Helm
+  name: userms
+  namespace: default
+spec:
+  rules:
+  - http:
+      paths:
+      - backend:
+          serviceName: {{ .Values.containerSrv }}
+          servicePort: {{ .Values.containerPort }}
+        path: /v1/api/user/
+        pathType: ImplementationSpecific
+
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: kong
+    meta.helm.sh/release-name: user
+    meta.helm.sh/release-namespace: default
+  generation: 1
+  labels:
+    app.kubernetes.io/managed-by: Helm
+  name: userforgotpassword
+  namespace: default
+spec:
+  rules:
+  - http:
+      paths:
+      - backend:
+          serviceName: {{ .Values.containerSrv }}
+          servicePort: {{ .Values.containerPort }}
+        path: /v1/api/user/forgot/password
+        pathType: ImplementationSpecific
+
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: kong
+    meta.helm.sh/release-name: user
+    meta.helm.sh/release-namespace: default
+  labels:
+    app.kubernetes.io/managed-by: Helm
+  name: userregister
+  namespace: default
+spec:
+  rules:
+  - http:
+      paths:
+      - backend:
+          serviceName: {{ .Values.containerSrv }}
+          servicePort: {{ .Values.containerPort }}
+        path: /v1/api/user/register
+        pathType: ImplementationSpecific
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: kong
+    meta.helm.sh/release-name: user
+    meta.helm.sh/release-namespace: default
+  labels:
+    app.kubernetes.io/managed-by: Helm
+  name: userregisterconfirm
+  namespace: default
+spec:
+  rules:
+  - http:
+      paths:
+      - backend:
+          serviceName: {{ .Values.containerSrv }}
+          servicePort: {{ .Values.containerPort }}
+        path: /v1/api/user/register/confirm
+        # pathType: ImplementationSpecific
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: kong
+    konghq.com/plugins: my-jwt-station
+    meta.helm.sh/release-name: user
+    meta.helm.sh/release-namespace: default
+  generation: 1
+  labels:
+    app.kubernetes.io/managed-by: Helm
+  name: userprofile
+  namespace: default
+spec:
+  rules:
+  - http:
+      paths:
+      - backend:
+          serviceName: {{ .Values.containerSrv }}
+          servicePort: {{ .Values.containerPort }}
+        path: /v1/api/user/profile
+        pathType: ImplementationSpecific
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: kong
+    konghq.com/plugins: my-jwt-station
+    meta.helm.sh/release-name: user
+    meta.helm.sh/release-namespace: default
+  generation: 1
+  labels:
+    app.kubernetes.io/managed-by: Helm
+  name: userprofilepassword
+  namespace: default
+spec:
+  rules:
+  - http:
+      paths:
+      - backend:
+          serviceName: {{ .Values.containerSrv }}
+          servicePort: {{ .Values.containerPort }}
+        path: /v1/api/user/profile/password
+        pathType: ImplementationSpecific
+
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: kong
+    konghq.com/plugins: my-jwt-station
+    meta.helm.sh/release-name: user
+    meta.helm.sh/release-namespace: default
+  generation: 1
+  labels:
+    app.kubernetes.io/managed-by: Helm
+  name: userprofileemail
+  namespace: default
+spec:
+  rules:
+  - http:
+      paths:
+      - backend:
+          serviceName: {{ .Values.containerSrv }}
+          servicePort: {{ .Values.containerPort }}
+        path: /v1/api/user/profile/email
+        pathType: ImplementationSpecific
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: kong
+    konghq.com/plugins: my-jwt-station
+    meta.helm.sh/release-name: user
+    meta.helm.sh/release-namespace: default
+  generation: 1
+  labels:
+    app.kubernetes.io/managed-by: Helm
+  name: userprofileemailconfirm
+  namespace: default
+spec:
+  rules:
+  - http:
+      paths:
+      - backend:
+          serviceName: {{ .Values.containerSrv }}
+          servicePort: {{ .Values.containerPort }}
+        path: /v1/api/user/profile/email/confirm
+        pathType: ImplementationSpecific
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: kong
+    meta.helm.sh/release-name: user
+    meta.helm.sh/release-namespace: default
+  generation: 1
+  labels:
+    app.kubernetes.io/managed-by: Helm
+  name: userforgotpasswordconfirm
+  namespace: default
+spec:
+  rules:
+  - http:
+      paths:
+      - backend:
+          serviceName: {{ .Values.containerSrv }}
+          servicePort: {{ .Values.containerPort }}
+        path: /v1/api/user/forgot/password/confirm
+        pathType: ImplementationSpecific
+
